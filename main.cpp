@@ -1,6 +1,10 @@
 #include "Equation.hpp"
 #include <cmath>
 #include <iostream>
+#include <iomanip>
+#include <limits>
+
+#define doubleWidth numeric_limits<double>::digits
 
 using namespace std;
 /*
@@ -14,15 +18,45 @@ int numOfRealRoots(double arr[], int len){
     }
 }
 */
+void desenharDivisoria(){
+    cout << "+";
+    for (int i = 0; i < doubleWidth; ++i) cout << "-";
+    cout << "+";
+    for (int i = 0; i < doubleWidth; ++i) cout << "-";
+    cout << "+";
+    for (int i = 0; i < doubleWidth; ++i) cout << "-";
+    cout << "+" << endl;
+}
+void desenharCabecalho(){
+    desenharDivisoria();
+    /* TODO: Entender por que o x não precisa do <= */
+    cout << "|";
+    for (int i = 0; i < (doubleWidth-8)/2; ++i) cout << " ";
+    cout << "Iteração";
+    for (int i = 0; i <= (doubleWidth-8)/2; ++i) cout << " ";
+    cout << "|";
+    for (int i = 0; i < (doubleWidth-1)/2; ++i) cout << " ";
+    cout << "x";
+    for (int i = 0; i < (doubleWidth-1)/2; ++i) cout << " ";
+    cout << "|";
+    for (int i = 0; i < (doubleWidth-4)/2; ++i) cout << " ";
+    cout << "f(x)";
+    for (int i = 0; i <= (doubleWidth-4)/2; ++i) cout << " ";
+    cout << "|" << endl;
+    desenharDivisoria();
+};
+
 double newtonRaphson(Equation eq, double x, double p, double error){
     int k = 1;
-    double xk, xk1, raiz;
+    double xk, xk1;
     xk = x;
     if(abs(eq.function(x)) < error) return x;
-    while(true){
-        xk1 = xk - (p*eq.function(xk))/eq.derivatedFunction(xk);
-        cout << "Iteração " << k << ":" << xk1 << endl;
-        if(abs(eq.function(xk1)) < error || abs(xk1 - xk) < error){
+    desenharCabecalho();
+    while(true) {
+        xk1 = xk - (p * eq.function(xk)) / eq.derivatedFunction(xk);
+        cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk << "|" << setw(doubleWidth) << eq.function(xk) << "|" << endl;
+        if (abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) {
+            desenharDivisoria();
             return xk1;
         }
         xk = xk1;
@@ -32,15 +66,19 @@ double newtonRaphson(Equation eq, double x, double p, double error){
 
 double secante(Equation eq, double x, double x1, double p, double error){
     int k = 1;
-    double xk, xk1, xk2, raiz;
+    double xk, xk1, xk2;
     xk = x;
     xk1 = x1;
     if(abs(eq.function(xk)) < error) return xk;
     if(abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) return xk1;
+    desenharCabecalho();
     while(true){
         xk2 = xk1 - (p*eq.function(xk1)*(xk1 - xk))/(eq.function(xk1) - eq.function(xk));
-        cout << "Iteração " << k << ":" <<xk2 << endl;
-        if(abs(eq.function(xk2)) < error || abs(xk2 - xk1) < error) return xk2;
+        cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk2 << "|" << setw(doubleWidth) << eq.function(xk2) << "|" << endl;
+        if(abs(eq.function(xk2)) < error || abs(xk2 - xk1) < error) {
+            desenharDivisoria();
+            return xk2;
+        }
         xk = xk1;
         xk1 = xk2; 
         k++;    
@@ -50,13 +88,20 @@ double secante(Equation eq, double x, double x1, double p, double error){
 double newtonPolinomios(Equation eq, double x, double error){
     int k = 1;
     double xk = x, xf, deltaX;
+    desenharCabecalho();
     while(true){
         xf = eq.function(xk);
-        if(abs(xf) < error) return xf;
+        if(abs(xf) < error) {
+            desenharDivisoria();
+            return xk;
+        }
         deltaX = xf/(eq.derivatedFunction(xk));
         xk  = xk - deltaX;
-        cout << "Iteração " << k << ": " << xk << endl;
-        if(abs(deltaX) < error) return xk;        
+        cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk << "|" << setw(doubleWidth) << eq.function(xk) << "|" << endl;
+        if(abs(deltaX) < error) {
+            desenharDivisoria();
+            return xk;
+        }
         k++;
     }
 }
