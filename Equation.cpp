@@ -1,6 +1,8 @@
 #include "Equation.hpp"
 #include <vector>
+#include <iostream>
 
+using namespace std;
 
 Equation::Equation(double x0, double x1, double x2, double x3, double x4){
     coef_[0] = x0;
@@ -19,12 +21,37 @@ double Equation::derivatedFunction(double x){
 }
 
 void Equation::positiveRoots(){
-    int i, k = 0, v = 0, p;
-    for(i = 0 ; i < 3 ; i++){
-        if(coef_[i]*coef_[i+1] < 0) v++;
+    int v = 0, i;
+    vector<double> coeficientesNaoNulos;
+
+    for (i = 0; i <= 4; i++) {
+        if (coef_[i] != 0) coeficientesNaoNulos.push_back(coef_[i]);
     }
-    while(2*k <= v){
-        p = v - 2*k; //Número par positivo menor que v
-        k++;
+
+    for (i = 0; i < coeficientesNaoNulos.size()-1; i++) {
+        if (coeficientesNaoNulos[i] * coeficientesNaoNulos[i+1] < 0) v++;
+    }
+
+    for (i = 0; i <= v; i += 2) {
+        cout << v << " - p = " << i << " -> p = " << (v - i) << endl;
     }
 }
+
+void Equation::negativeRoots(){
+    int v = 0, i;
+    vector<double> coeficientesNaoNulos;
+
+    for (i = 0; i <= 4; i++) {
+        if (coef_[i] != 0){
+            if(i % 2 != 0) coeficientesNaoNulos.push_back(-coef_[i]);
+            else coeficientesNaoNulos.push_back(coef_[i]);
+        } 
+    }
+
+    for (i = 0; i <= coeficientesNaoNulos.size(); i++) {
+        if (coeficientesNaoNulos[i] * coeficientesNaoNulos[i+1] < 0) v++;
+    }
+
+    for (i = 0; i <= v; i += 2) {
+        cout << v << " - n = " << i << " -> n = " << (v - i) << endl;
+    }
