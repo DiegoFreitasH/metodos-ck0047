@@ -1,5 +1,6 @@
 #include "Equation.hpp"
 #include <vector>
+#include <math.h>
 #include <iostream>
 
 using namespace std;
@@ -55,3 +56,34 @@ void Equation::negativeRoots(){
     for (i = 0; i <= v; i += 2) {
         cout << v << " - n = " << i << " -> n = " << (v - i) << endl;
     }
+}
+
+double Equation::localizeAtLeastOneRoot(){
+    int n;
+    double p1, pn;
+
+    for (int i = 0; i <= 4; i++) {
+        if (coef_[i] != 0) n = i;
+    }
+
+    p1 = n * (abs(coef_[0])/abs(coef_[1]));
+    pn = pow((abs(coef_[0])/abs(coef_[n])),(1.0/n));
+
+    return min(p1, pn);
+}
+
+double Equation::localizeRoots() {
+    int n;
+    double maximum = 0;
+
+    for (int i = 0; i <= 4; i++) {
+        if (coef_[i] != 0) n = i;
+    }
+
+    for (int i = 0; i <= n-1; i++) {
+        if ((abs(coef_[i])/abs(coef_[n])) > maximum)
+            maximum = (abs(coef_[i])/abs(coef_[n]));
+    }
+
+    return 1 + maximum;
+}

@@ -125,6 +125,8 @@ int main(){
     cout << "Newton-Raphson: " << raiz_nr << endl;
     cout << "Método da Secante: " << raiz_sec << endl;
     cout << "Método Newton Polinomios: " << raiz_np << endl;
+    cout << "Localizando as Raizes: " << endl;
+    cout << eq_sec.localizeRoots() << endl;   
 
     return 0;
 }

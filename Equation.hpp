@@ -11,6 +11,9 @@ class Equation{
         double derivatedFunction(double x);
         void positiveRoots();
         void negativeRoots();
+        double localizeAtLeastOneRoot();
+        double localizeRoots();
+        //friend std::ostream& operator<<(std::ostream& out, const Equation& eq);
 
 };
 
