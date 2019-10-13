@@ -1,5 +1,6 @@
 #include "Equation.hpp"
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -49,14 +50,19 @@ void desenharCabecalho(){
 double newtonRaphson(Equation eq, double x, double p, double error){
     int k = 1;
     double xk, xk1;
+    ofstream arquivoSaida;
     xk = x;
     if(abs(eq.function(x)) < error) return x;
     desenharCabecalho();
+    arquivoSaida.open("newtonRaphson.csv");
+    arquivoSaida << "sep=," << endl;
     while(true) {
         xk1 = xk - (p * eq.function(xk)) / eq.derivatedFunction(xk);
         cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk << "|" << setw(doubleWidth) << eq.function(xk) << "|" << endl;
+        arquivoSaida << k << "," << xk << "," << eq.function(xk) << endl;
         if (abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) {
             desenharDivisoria();
+            arquivoSaida.close();
             return xk1;
         }
         xk = xk1;
@@ -67,16 +73,21 @@ double newtonRaphson(Equation eq, double x, double p, double error){
 double secante(Equation eq, double x, double x1, double p, double error){
     int k = 1;
     double xk, xk1, xk2;
+    ofstream arquivoSaida;
     xk = x;
     xk1 = x1;
     if(abs(eq.function(xk)) < error) return xk;
     if(abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) return xk1;
     desenharCabecalho();
+    arquivoSaida.open("secante.csv");
+    arquivoSaida << "sep=," << endl;
     while(true){
         xk2 = xk1 - (p*eq.function(xk1)*(xk1 - xk))/(eq.function(xk1) - eq.function(xk));
         cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk2 << "|" << setw(doubleWidth) << eq.function(xk2) << "|" << endl;
+        arquivoSaida << k << "," << xk2 << "," << eq.function(xk2) << endl;
         if(abs(eq.function(xk2)) < error || abs(xk2 - xk1) < error) {
             desenharDivisoria();
+            arquivoSaida.close();
             return xk2;
         }
         xk = xk1;
@@ -88,7 +99,10 @@ double secante(Equation eq, double x, double x1, double p, double error){
 double newtonPolinomios(Equation eq, double x, double error){
     int k = 1;
     double xk = x, xf, deltaX;
+    ofstream arquivoSaida;
     desenharCabecalho();
+    arquivoSaida.open("newtonPolinomial.csv");
+    arquivoSaida << "sep=," << endl;
     while(true){
         xf = eq.function(xk);
         if(abs(xf) < error) {
@@ -98,8 +112,10 @@ double newtonPolinomios(Equation eq, double x, double error){
         deltaX = xf/(eq.derivatedFunction(xk));
         xk  = xk - deltaX;
         cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk << "|" << setw(doubleWidth) << eq.function(xk) << "|" << endl;
+        arquivoSaida << k << "," << xk << "," << eq.function(xk) << endl;
         if(abs(deltaX) < error) {
             desenharDivisoria();
+            arquivoSaida.close();
             return xk;
         }
         k++;
