@@ -87,3 +87,14 @@ double Equation::localizeRoots() {
 
     return 1 + maximum;
 }
+
+double Equation::isolation(){
+    int i;
+    double positiveBound = ceil(localizeRoots());
+    double negativeBound = -1*positiveBound;
+    for (i = negativeBound; i <= positiveBound; i++) {
+        if (function(i) * function(i+1) < 0) {
+            return (2*double(i) + 1)/2.0;
+        }
+    }
+}

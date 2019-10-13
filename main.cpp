@@ -111,15 +111,23 @@ int main(){
     Equation eq_newraph = Equation(-2, 0, 1, 0, 0);
     Equation eq_sec = Equation(3, -9, 0, 1, 0);
     Equation eq_newpoli = Equation(-2, -1, 2, 1, 0);
+    double newraph_x0 = eq_newraph.isolation();
+    double sec_x0 = eq_sec.isolation();
+    double newpoli_x0 = eq_newpoli.isolation();
+    cout << "Isolamento: " << endl;
+    cout << "Newton-Raphson: " << newraph_x0 << endl;
+    cout << "Secante: " << sec_x0 << endl;
+    cout << "Newton Polinomios: "<< newpoli_x0 << endl;
+    cout << "-----------------------" << endl << endl;
 
-    cout << "Método Newton-Raphson" << endl;
-    raiz_nr = newtonRaphson(eq_newraph, 1.0, 1.0, 0.000000001);
+    cout << "Método Newton-Raphson: " << endl;
+    raiz_nr = newtonRaphson(eq_newraph, newraph_x0, 1.0, 0.000000001);
 
     cout << endl << "Método da Secante: " << endl;
     raiz_sec = secante(eq_sec, 0, 1, 1, 0.0005);
 
     cout << endl << "Método Newton para Polinomios: " << endl;
-    raiz_np = newtonPolinomios(eq_newpoli, 2, 0.001);
+    raiz_np = newtonPolinomios(eq_newpoli, newpoli_x0, 0.001);
 
     cout << endl << "Raizes" << endl << "-----------" << endl;
     cout << "Newton-Raphson: " << raiz_nr << endl;

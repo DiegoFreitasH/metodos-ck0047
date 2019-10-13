@@ -13,6 +13,7 @@ class Equation{
         void negativeRoots();
         double localizeAtLeastOneRoot();
         double localizeRoots();
+        double isolation();
         //friend std::ostream& operator<<(std::ostream& out, const Equation& eq);
 
 };
