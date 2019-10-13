@@ -124,7 +124,7 @@ int main(){
     raiz_nr = newtonRaphson(eq_newraph, newraph_x0, 1.0, 0.000000001);
 
     cout << endl << "Método da Secante: " << endl;
-    raiz_sec = secante(eq_sec, 0, 1, 1, 0.0005);
+    raiz_sec = secante(eq_sec, sec_x0, sec_x0 + 1, 1, 0.0005);
 
     cout << endl << "Método Newton para Polinomios: " << endl;
     raiz_np = newtonPolinomios(eq_newpoli, newpoli_x0, 0.001);
