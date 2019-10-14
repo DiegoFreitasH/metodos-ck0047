@@ -3,7 +3,7 @@
 
 class Equation{
     private:
-        double coef_[4];
+        double coef_[5];
 
     public:
         Equation(double x0,double x1, double x2, double x3, double x4);
