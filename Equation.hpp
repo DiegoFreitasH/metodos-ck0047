@@ -16,10 +16,9 @@ class Equation{
         double function(double x);
         double derivatedFunction(double x);
         void positiveRoots();
-        void negativeRoots();
-        double localizeAtLeastOneRoot();
         double localizeRoots();
         double isolation();
+        void print();
         //friend std::ostream& operator<<(std::ostream& out, const Equation& eq);
 
 };
