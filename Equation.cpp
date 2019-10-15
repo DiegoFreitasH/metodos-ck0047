@@ -5,12 +5,42 @@
 
 using namespace std;
 
+Equation::Equation(){
+    for(int i = 0 ; i < 4 ; i++) coef_[i] = 0;
+}
+
 Equation::Equation(double x0, double x1, double x2, double x3, double x4){
     coef_[0] = x0;
     coef_[1] = x1;
     coef_[2] = x2;
     coef_[3] = x3;
     coef_[4] = x4;
+}
+
+Equation::Equation(double x0, double x1, double x2, double x3, double x4, double error, int mult){
+    coef_[0] = x0;
+    coef_[1] = x1;
+    coef_[2] = x2;
+    coef_[3] = x3;
+    coef_[4] = x4;
+    error_ = error;
+    mult_ = mult;
+}
+
+void Equation::setError(double err){
+    error_ = err;
+}
+
+double Equation::getError(){
+    return error_;
+}
+
+void Equation::setMult(int mult){
+    mult_ = mult;
+}
+
+int Equation::getMult(){
+    return mult_;
 }
 
 double Equation::function(double x){
