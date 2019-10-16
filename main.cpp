@@ -52,13 +52,14 @@ double newtonRaphson(Equation eq, double x, double p, double error){
     double xk, xk1;
     ofstream arquivoSaida("newtonRaphson.csv");
     xk = x;
-    if(abs(eq.function(x)) < error) return x;
+    if(abs(eq.function(xk)) < error) return xk;
     desenharCabecalho();
     arquivoSaida << "Iteração,x,f(x)" << endl;
     while(true) {
-        xk1 = xk - (p * eq.function(xk)) / eq.derivatedFunction(xk);
+        xk1 = xk - (p * eq.function(xk) / eq.derivatedFunction(xk));
         cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk << "|" << setw(doubleWidth) << eq.function(xk) << "|" << endl;
-        arquivoSaida << k << "," << xk << "," << eq.function(xk) << endl;
+        arquivoSaida << k << "," << xk1 << "," << eq.function(xk1) << endl;
+        cin.get();
         if (abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) {
             desenharDivisoria();
             arquivoSaida.close();
@@ -127,11 +128,11 @@ int main(){
     cout << "Entre a quatidade de Equações: ";
     cin >> n;
     Equation equations[n];
+    cout << "Entre a precisão das equações: ";
+    cin >> error;
     for(i = 0 ; i < n ; i++){
         cout << "Entre os coeficientes separados por espaços(a0 a1 a2 a3 a4): ";
         cin >> coef[0] >> coef[1] >> coef[2] >> coef[3] >> coef[4];
-        cout << "Entre a precisão: ";
-        cin >> error;
         cout << "Entre a multiplicidade: ";
         cin >> mult;
         equations[i] = Equation(coef[0], coef[1], coef[2], coef[3], coef[4], error, mult);
@@ -141,7 +142,7 @@ int main(){
         error = equations[i].getError();
         mult = equations[i].getMult();
         x0 = equations[i].isolation();
-        cout << "Isolamento: "<< x0;
+        cout << "Isolamento: "<< x0 << endl;
 
 
         cout << "Método Newton-Raphson: " << endl;
