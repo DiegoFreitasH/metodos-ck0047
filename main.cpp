@@ -112,7 +112,7 @@ int main(){
     ofstream raizes ("raizes.csv");
     raizes << "Equação,Raiz Newton-Raphson,Raiz Secante,Raiz Newton Polinomial" << endl;
     ofstream comparativo("comparar.csv");
-    comparativo << "Equação,x0,Iterações em Newton-Raphson,Iterações em Secante,Iteraçeõs em Newton Polinomial" << endl;
+    comparativo << "Equação,x0,Precisão,Iterações em Newton-Raphson,Iterações em Secante,Iteraçeõs em Newton Polinomial" << endl;
     for(i = 0 ; i < n ; i++){
         error = equations[i].getError();
         mult = equations[i].getMult();
@@ -122,11 +122,11 @@ int main(){
         raiz_sec = secante(equations[i], x0, x0 + 1, mult, error, i);
         raiz_np = newtonPolinomios(equations[i], x0, error, i);
 
-        raizes << equations[i] << ",";
-        if(raiz_nr.second != -1) raizes << raiz_nr.second << "," << raiz_sec.second << "," << raiz_np.second << endl;
+        raizes << equations[i];
+        if(raiz_nr.second != -1) raizes << "," << raiz_nr.second << "," << raiz_sec.second << "," << raiz_np.second << endl;
         else raizes << "sem raizes reais positivas" << endl;
-        comparativo << equations[i] << "," << x0 << ",";
-        if(raiz_nr.first != -1) comparativo << raiz_nr.first << "," << raiz_sec.first << "," << raiz_np.first << endl; else comparativo << "sem raizes reais positivas a serem calculadas" << endl;
+        comparativo << equations[i] << "," << x0 << "," << error;
+        if(raiz_nr.first != -1) comparativo << "," << raiz_nr.first << "," << raiz_sec.first << "," << raiz_np.first << endl; else comparativo << "sem raizes reais positivas a serem calculadas" << endl;
     }
     cout << "Tabelas geradas em .csv" << endl;
     
