@@ -19,18 +19,53 @@ int numOfRealRoots(double arr[], int len){
     }
 }
 */
+void desenharDivisoria(){
+    cout << "+";
+    for (int i = 0; i < doubleWidth; ++i) cout << "-";
+    cout << "+";
+    for (int i = 0; i < doubleWidth; ++i) cout << "-";
+    cout << "+";
+    for (int i = 0; i < doubleWidth; ++i) cout << "-";
+    cout << "+" << endl;
+}
+void desenharCabecalho(){
+    desenharDivisoria();
+    /* TODO: Entender por que o x não precisa do <= */
+    cout << "|";
+    for (int i = 0; i < (doubleWidth-8)/2; ++i) cout << " ";
+    cout << "Iteração";
+    for (int i = 0; i <= (doubleWidth-8)/2; ++i) cout << " ";
+    cout << "|";
+    for (int i = 0; i < (doubleWidth-1)/2; ++i) cout << " ";
+    cout << "x";
+    for (int i = 0; i < (doubleWidth-1)/2; ++i) cout << " ";
+    cout << "|";
+    for (int i = 0; i < (doubleWidth-4)/2; ++i) cout << " ";
+    cout << "f(x)";
+    for (int i = 0; i <= (doubleWidth-4)/2; ++i) cout << " ";
+    cout << "|" << endl;
+    desenharDivisoria();
+};
 
 double newtonRaphson(Equation eq, double x, double p, double error){
     int k = 1;
     double xk, xk1;
+    if(x == -1){
+        cout << "Sem raízes reais positivas" << endl;
+        return 1;
+    }
     ofstream arquivoSaida("newtonRaphson.csv");
     xk = x;
-    if(abs(eq.function(x)) < error) return x;
+    if(abs(eq.function(xk)) < error) return xk;
+    desenharCabecalho();
     arquivoSaida << "Iteração,x,f(x)" << endl;
     while(true) {
-        xk1 = xk - (p * eq.function(xk)) / eq.derivatedFunction(xk);
-        arquivoSaida << k << "," << xk << "," << eq.function(xk) << endl;
+        xk1 = xk - (p * eq.function(xk) / eq.derivatedFunction(xk));
+        cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk << "|" << setw(doubleWidth) << eq.function(xk) << "|" << endl;
+        arquivoSaida << k << "," << xk1 << "," << eq.function(xk1) << endl;
+        cin.get();
         if (abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) {
+            desenharDivisoria();
             arquivoSaida.close();
             return xk1;
         }
@@ -42,16 +77,23 @@ double newtonRaphson(Equation eq, double x, double p, double error){
 double secante(Equation eq, double x, double x1, double p, double error){
     int k = 1;
     double xk, xk1, xk2;
+    if(x == -1){
+        cout << "Sem raízes reais positivas" << endl;
+        return 1;
+    }
     ofstream arquivoSaida("secante.csv");
     xk = x;
     xk1 = x1;
     if(abs(eq.function(xk)) < error) return xk;
     if(abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) return xk1;
+    desenharCabecalho();
     arquivoSaida << "Iteração,x,f(x)" << endl;
     while(true){
         xk2 = xk1 - (p*eq.function(xk1)*(xk1 - xk))/(eq.function(xk1) - eq.function(xk));
+        cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk2 << "|" << setw(doubleWidth) << eq.function(xk2) << "|" << endl;
         arquivoSaida << k << "," << xk2 << "," << eq.function(xk2) << endl;
         if(abs(eq.function(xk2)) < error || abs(xk2 - xk1) < error) {
+            desenharDivisoria();
             arquivoSaida.close();
             return xk2;
         }
@@ -64,18 +106,25 @@ double secante(Equation eq, double x, double x1, double p, double error){
 double newtonPolinomios(Equation eq, double x, double error){
     int k = 1;
     double xk = x, xf, deltaX;
+    if(x == -1){
+        cout << "Sem raízes reais positivas" << endl;
+        return 1;
+    }
     ofstream arquivoSaida("newtonPolinomial.csv");
+    desenharCabecalho();
     arquivoSaida << "Iteração,x,f(x)" << endl;
     while(true){
         xf = eq.function(xk);
         if(abs(xf) < error) {
-            arquivoSaida.close();
+            desenharDivisoria();
             return xk;
         }
         deltaX = xf/(eq.derivatedFunction(xk));
         xk  = xk - deltaX;
+        cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk << "|" << setw(doubleWidth) << eq.function(xk) << "|" << endl;
         arquivoSaida << k << "," << xk << "," << eq.function(xk) << endl;
         if(abs(deltaX) < error) {
+            desenharDivisoria();
             arquivoSaida.close();
             return xk;
         }
@@ -91,11 +140,11 @@ int main(){
     cout << "Entre a quatidade de Equações: ";
     cin >> n;
     Equation equations[n];
+    cout << "Entre a precisão das equações: ";
+    cin >> error;
     for(i = 0 ; i < n ; i++){
         cout << "Entre os coeficientes separados por espaços(a0 a1 a2 a3 a4): ";
         cin >> coef[0] >> coef[1] >> coef[2] >> coef[3] >> coef[4];
-        cout << "Entre a precisão: ";
-        cin >> error;
         cout << "Entre a multiplicidade: ";
         cin >> mult;
         equations[i] = Equation(coef[0], coef[1], coef[2], coef[3], coef[4], error, mult);
@@ -105,31 +154,23 @@ int main(){
         error = equations[i].getError();
         mult = equations[i].getMult();
         x0 = equations[i].isolation();
-        cout << "Isolamento: "<< x0;
+        cout << "Isolamento: "<< x0 << endl;
 
+
+        cout << "Método Newton-Raphson: " << endl;
         raiz_nr = newtonRaphson(equations[i], x0, mult, error);
+
+        cout << endl << "Método da Secante: " << endl;
         raiz_sec = secante(equations[i], x0, x0 + 1, mult, error);
+
+        cout << endl << "Método Newton para Polinomios: " << endl;
         raiz_np = newtonPolinomios(equations[i], x0, error);
 
-        /* Resultados dos 3 Métodos*/
-        cout << "Raízes" << endl;
-        for(int i=0; i<4; i++){
-            cout << "+";
-            for(int j=0; j<doubleWidth; j++) cout << "-";
-        }
-        cout << "+" << endl;
-        cout << "| " << setw(doubleWidth+2) << "Equação |" << setw(doubleWidth+1) << "Newton-Raphson |" << setw(doubleWidth+1) << "Secante |" << setw(doubleWidth+1) << "Newton Polinomial |" << endl;
-        for(int i=0; i<4; i++){
-            cout << "+";
-            for(int j=0; j<doubleWidth; j++) cout << "-";
-        }
-        cout << "+" << endl;
-        cout << "|" << setw(doubleWidth) << equations[i] << "|" << setw(doubleWidth) << raiz_nr << "|" << setw(doubleWidth) << raiz_sec << "|" << setw(doubleWidth) << raiz_np << "|" << endl;
-        for(int i=0; i<4; i++){
-            cout << "+";
-            for(int j=0; j<doubleWidth; j++) cout << "-";
-        }
-        cout << "+" << endl;
+        cout << endl << "Raizes" << endl << "-----------" << endl;
+        cout << "Newton-Raphson: " << raiz_nr << endl;
+        cout << "Método da Secante: " << raiz_sec << endl;
+        cout << "Método Newton Polinomios: " << raiz_np << endl;
+        cout << "----------------------------------" << endl;
     }
     
     /*
