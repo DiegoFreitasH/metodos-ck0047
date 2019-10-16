@@ -1,11 +1,9 @@
 #include "Equation.hpp"
 #include <cmath>
+#include <string>
 #include <fstream>
 #include <iostream>
-#include <iomanip>
-#include <limits>
-
-#define doubleWidth numeric_limits<double>::digits
+#include <utility>
 
 using namespace std;
 /*
@@ -19,83 +17,47 @@ int numOfRealRoots(double arr[], int len){
     }
 }
 */
-void desenharDivisoria(){
-    cout << "+";
-    for (int i = 0; i < doubleWidth; ++i) cout << "-";
-    cout << "+";
-    for (int i = 0; i < doubleWidth; ++i) cout << "-";
-    cout << "+";
-    for (int i = 0; i < doubleWidth; ++i) cout << "-";
-    cout << "+" << endl;
-}
-void desenharCabecalho(){
-    desenharDivisoria();
-    /* TODO: Entender por que o x não precisa do <= */
-    cout << "|";
-    for (int i = 0; i < (doubleWidth-8)/2; ++i) cout << " ";
-    cout << "Iteração";
-    for (int i = 0; i <= (doubleWidth-8)/2; ++i) cout << " ";
-    cout << "|";
-    for (int i = 0; i < (doubleWidth-1)/2; ++i) cout << " ";
-    cout << "x";
-    for (int i = 0; i < (doubleWidth-1)/2; ++i) cout << " ";
-    cout << "|";
-    for (int i = 0; i < (doubleWidth-4)/2; ++i) cout << " ";
-    cout << "f(x)";
-    for (int i = 0; i <= (doubleWidth-4)/2; ++i) cout << " ";
-    cout << "|" << endl;
-    desenharDivisoria();
-};
 
-double newtonRaphson(Equation eq, double x, double p, double error){
+pair<int, double> newtonRaphson(Equation eq, double x, double p, double error, int ordem){
     int k = 1;
     double xk, xk1;
     if(x == -1){
-        cout << "Sem raízes reais positivas" << endl;
-        return 1;
+        return pair<int, double>(-1, -1);
     }
-    ofstream arquivoSaida("newtonRaphson.csv");
+    ofstream arquivoSaida("iteracoesNewtonRaphson-" + to_string(ordem) + ".csv");
     xk = x;
-    if(abs(eq.function(xk)) < error) return xk;
-    desenharCabecalho();
+    if(abs(eq.function(xk)) < error) return pair<int, double>(0, xk);
     arquivoSaida << "Iteração,x,f(x)" << endl;
     while(true) {
         xk1 = xk - (p * eq.function(xk) / eq.derivatedFunction(xk));
-        cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk << "|" << setw(doubleWidth) << eq.function(xk) << "|" << endl;
         arquivoSaida << k << "," << xk1 << "," << eq.function(xk1) << endl;
-        cin.get();
         if (abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) {
-            desenharDivisoria();
             arquivoSaida.close();
-            return xk1;
+            return pair<int, double>(k, xk1);
         }
         xk = xk1;
         k++;
     }
 }
 
-double secante(Equation eq, double x, double x1, double p, double error){
+pair<int, double> secante(Equation eq, double x, double x1, double p, double error, int ordem){
     int k = 1;
     double xk, xk1, xk2;
     if(x == -1){
-        cout << "Sem raízes reais positivas" << endl;
-        return 1;
+        return pair<int, double>(-1, -1);
     }
-    ofstream arquivoSaida("secante.csv");
+    ofstream arquivoSaida("iteracoesSecante-" + to_string(ordem) + ".csv");
     xk = x;
     xk1 = x1;
-    if(abs(eq.function(xk)) < error) return xk;
-    if(abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) return xk1;
-    desenharCabecalho();
+    if(abs(eq.function(xk)) < error) return pair<int, double>(0, xk);
+    if(abs(eq.function(xk1)) < error || abs(xk1 - xk) < error) return pair<int, double>(0, xk1);
     arquivoSaida << "Iteração,x,f(x)" << endl;
     while(true){
         xk2 = xk1 - (p*eq.function(xk1)*(xk1 - xk))/(eq.function(xk1) - eq.function(xk));
-        cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk2 << "|" << setw(doubleWidth) << eq.function(xk2) << "|" << endl;
         arquivoSaida << k << "," << xk2 << "," << eq.function(xk2) << endl;
         if(abs(eq.function(xk2)) < error || abs(xk2 - xk1) < error) {
-            desenharDivisoria();
             arquivoSaida.close();
-            return xk2;
+            return pair<int, double>(k, xk2);
         }
         xk = xk1;
         xk1 = xk2; 
@@ -103,30 +65,26 @@ double secante(Equation eq, double x, double x1, double p, double error){
     }
 }
 
-double newtonPolinomios(Equation eq, double x, double error){
+pair<int, double> newtonPolinomios(Equation eq, double x, double error, int ordem){
     int k = 1;
     double xk = x, xf, deltaX;
     if(x == -1){
-        cout << "Sem raízes reais positivas" << endl;
-        return 1;
+        return pair<int, double>(-1, -1);
     }
-    ofstream arquivoSaida("newtonPolinomial.csv");
-    desenharCabecalho();
+    ofstream arquivoSaida("iteracoesNewtonPolinomial-" + to_string(ordem) + ".csv");
     arquivoSaida << "Iteração,x,f(x)" << endl;
     while(true){
         xf = eq.function(xk);
         if(abs(xf) < error) {
-            desenharDivisoria();
-            return xk;
+            arquivoSaida.close();
+            return pair<int, double>(k, xk);
         }
         deltaX = xf/(eq.derivatedFunction(xk));
         xk  = xk - deltaX;
-        cout << "|" << setw(doubleWidth) << k << "|" << setw(doubleWidth) << xk << "|" << setw(doubleWidth) << eq.function(xk) << "|" << endl;
         arquivoSaida << k << "," << xk << "," << eq.function(xk) << endl;
         if(abs(deltaX) < error) {
-            desenharDivisoria();
             arquivoSaida.close();
-            return xk;
+            return pair<int, double>(k, xk);
         }
         k++;
     }
@@ -135,7 +93,8 @@ double newtonPolinomios(Equation eq, double x, double error){
 int main(){
     int n, i, mult;
     double coef[4];
-    double raiz_nr, raiz_sec, raiz_np, x0, error;
+    double x0, error;
+    pair<int, double> raiz_nr, raiz_sec, raiz_np;
 
     cout << "Entre a quatidade de Equações: ";
     cin >> n;
@@ -150,28 +109,26 @@ int main(){
         equations[i] = Equation(coef[0], coef[1], coef[2], coef[3], coef[4], error, mult);
     }
 
+    ofstream raizes ("raizes.csv");
+    raizes << "Equação,Raiz Newton-Raphson,Raiz Secante,Raiz Newton Polinomial" << endl;
+    ofstream comparativo("comparar.csv");
+    comparativo << "Equação,x0,Iterações em Newton-Raphson,Iterações em Secante,Iteraçeõs em Newton Polinomial" << endl;
     for(i = 0 ; i < n ; i++){
         error = equations[i].getError();
         mult = equations[i].getMult();
         x0 = equations[i].isolation();
-        cout << "Isolamento: "<< x0 << endl;
 
+        raiz_nr = newtonRaphson(equations[i], x0, mult, error, i);
+        raiz_sec = secante(equations[i], x0, x0 + 1, mult, error, i);
+        raiz_np = newtonPolinomios(equations[i], x0, error, i);
 
-        cout << "Método Newton-Raphson: " << endl;
-        raiz_nr = newtonRaphson(equations[i], x0, mult, error);
-
-        cout << endl << "Método da Secante: " << endl;
-        raiz_sec = secante(equations[i], x0, x0 + 1, mult, error);
-
-        cout << endl << "Método Newton para Polinomios: " << endl;
-        raiz_np = newtonPolinomios(equations[i], x0, error);
-
-        cout << endl << "Raizes" << endl << "-----------" << endl;
-        cout << "Newton-Raphson: " << raiz_nr << endl;
-        cout << "Método da Secante: " << raiz_sec << endl;
-        cout << "Método Newton Polinomios: " << raiz_np << endl;
-        cout << "----------------------------------" << endl;
+        raizes << equations[i] << ",";
+        if(raiz_nr.second != -1) raizes << raiz_nr.second << "," << raiz_sec.second << "," << raiz_np.second << endl;
+        else raizes << "sem raizes reais positivas" << endl;
+        comparativo << equations[i] << "," << x0 << ",";
+        if(raiz_nr.first != -1) comparativo << raiz_nr.first << "," << raiz_sec.first << "," << raiz_np.first << endl; else comparativo << "sem raizes reais positivas a serem calculadas" << endl;
     }
+    cout << "Tabelas geradas em .csv" << endl;
     
     /*
     double raiz_nr, raiz_sec, raiz_np;
