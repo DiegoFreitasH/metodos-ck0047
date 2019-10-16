@@ -43,14 +43,17 @@ int Equation::getMult(){
     return mult_;
 }
 
+//Função em si
 double Equation::function(double x){
     return (((coef_[4]*x + coef_[3])*x + coef_[2])*x + coef_[1])*x + coef_[0];
 }
 
+//Função derivada
 double Equation::derivatedFunction(double x){
     return (((4*coef_[4]*x + 3*coef_[3])*x + 2*coef_[2])*x + coef_[1]);
 }
 
+//Função para estimar quantidades de raizes positivas
 void Equation::positiveRoots(){
     int v = 0, i;
     vector<double> coeficientesNaoNulos;
@@ -68,7 +71,7 @@ void Equation::positiveRoots(){
     }
 }
 
-
+//Estimar o limite máximo estimado das raizes positivas
 double Equation::localizeRoots() {
     int n;
     double maximum = 0;
@@ -85,6 +88,7 @@ double Equation::localizeRoots() {
     return 1 + maximum;
 }
 
+//Isolamento, retornando o limite superior
 double Equation::isolation(){
     int i;
     double positiveBound = ceil(localizeRoots());
@@ -98,7 +102,7 @@ double Equation::isolation(){
     return -1;
 }
 
-
+//Printar a reação
 void Equation::print() {
     int n;
 	

@@ -52,7 +52,7 @@ double newtonRaphson(Equation eq, double x, double p, double error){
     double xk, xk1;
     if(x == -1){
         cout << "Sem raízes reais positivas" << endl;
-        return 1;
+        return -1;
     }
     ofstream arquivoSaida("newtonRaphson.csv");
     xk = x;
@@ -79,7 +79,7 @@ double secante(Equation eq, double x, double x1, double p, double error){
     double xk, xk1, xk2;
     if(x == -1){
         cout << "Sem raízes reais positivas" << endl;
-        return 1;
+        return -1;
     }
     ofstream arquivoSaida("secante.csv");
     xk = x;
@@ -108,7 +108,7 @@ double newtonPolinomios(Equation eq, double x, double error){
     double xk = x, xf, deltaX;
     if(x == -1){
         cout << "Sem raízes reais positivas" << endl;
-        return 1;
+        return -1;
     }
     ofstream arquivoSaida("newtonPolinomial.csv");
     desenharCabecalho();
