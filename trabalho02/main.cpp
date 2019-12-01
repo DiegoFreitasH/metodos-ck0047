@@ -21,13 +21,9 @@ void initPermutationVector(vector<int>& p){
 void permute(vector<int>& p, matriz& matrix, const int& k, const int& r){
     int aux, i;
     double temp;
-    aux = p[k];
-    p[k] = p[r];
-    p[r] = aux;
+    swap(p[k], p[r]);
     for(i = 0 ; i < matrix.size() ; i++){
-        temp = matrix[k][i];
-        matrix[k][i] = matrix[r][i];
-        matrix[r][i] = temp;
+        swap(matrix[k][i], matrix[r][i]);
     }
 }
 
@@ -41,7 +37,8 @@ vector<double> permute(vector<double>& D, vector<int>& p, int n){
 
 pair<double, int> escolher_pivo(const matriz& matrix, const int& k){
     double pv = matrix[k][k], pv_aux;
-    int r = k, i;
+    int r = k; 
+    unsigned int i;
     for( i = k+1 ; i < matrix.size() ; i++){
         pv_aux = matrix[i][k];
         if(abs(pv_aux) > pv){
@@ -104,8 +101,8 @@ pair<vector<double>, bool> factLU(const matriz& matrix, matriz& matrix_L, matriz
     pair<double, int> pivo;
     vector<int> p(n);
     vector<double> D;
-
     matrix_U = matrix;
+    matrix_L = matriz(n, vector<double>(n));
     matrix_L[0][0] = 1;
 
     
@@ -113,14 +110,12 @@ pair<vector<double>, bool> factLU(const matriz& matrix, matriz& matrix_L, matriz
     
     for(k = 0 ; k < n - 1 ; k++){
         pivo = escolher_pivo(matrix_U, k);
-        if(pivo.first == 0){
-            error_flag = true;
-            return pair<vector<double>, bool>(vector_X, error_flag);
-        } 
+        
+        if(pivo.first == 0) return pair<vector<double>, bool>(vector_X, true);
+        
         if(pivo.second != k) permute(p, matrix_U, k, pivo.second);
         
         for(i = k + 1 ; i < n ; i++){
-            
             m = -1 * (matrix_U[i][k] / matrix_U[k][k]);
             matrix_U[i][k] = 0;
             matrix_L[i][k] = -m;
@@ -155,7 +150,7 @@ pair<vector<double>, bool> factDoolitle(const matriz& matrix, matriz& matrix_L, 
                 soma += (matrix_L[i][j]*matrix_U[j][k]);
             }
             matrix_U[i][k] = matrix[i][k] - soma;
-            
+            if(matrix_U[i][i] == 0) return pair<vector<double>, bool> (vector_X, true);
         }
 
         for(k = i ; k < n ; k++){
@@ -190,7 +185,7 @@ bool checkResult(matriz matrix, vector<double> vector_X, vector<double> vector_D
 }
 
 void printMatrix(matriz& matrix){
-    for(int i = 0 ; i < matrix.size() ; i++){
+    for(unsigned int i = 0 ; i < matrix.size() ; i++){
         for(int j = 0 ; j < matrix.size() ; j++){
             printf("%8.2f ", matrix[i][j]);
         }
@@ -219,22 +214,22 @@ int main(int argc, char** argv){
     pair<matriz, matriz> factor;
     pair<vector<double>, bool> result;
     matriz matrix_A = {{1, -3, 2}, {-2, 8, -1}, {4, -6, 5}};
-    matriz matrix_L(n, vector<double>(n));
+    matriz matrix_L;
     matriz matrix_U;
     vector<double> vector_D = {11, -15, 29};
     vector<double> vector_X;
     bool error;
     
-
-    // result = factLU(matrix_A, matrix_L, matrix_U, vector_D, n);
-    result = factDoolitle(matrix_A, matrix_L, matrix_U, vector_D, n);
+    // result.first -> Vetor solução
+    // result.second -> boolean de erro
+    result = factLU(matrix_A, matrix_L, matrix_U, vector_D, n);
+    // result = factDoolitle(matrix_A, matrix_L, matrix_U, vector_D, n);
     error = result.second;
-    if(!error){
-        vector_X = result.first;
-    } else{
+    if(error){
         cout << "Error" << endl;
         return 0;
     }
+    vector_X = result.first;
 
     // Printa o resutado 
     for(i = 0 ; i < n ; i++) printf("c%d: %5.2f\n", i, vector_X[i]);   
