@@ -127,6 +127,12 @@ pair<vector<double>, bool> factLU(const matriz& matrix, matriz& matrix_L, matriz
         }
     }
 
+    double det = 1;
+    for(int l = 0 ; l < n ; l++){
+        det *= matrix_U[l][l];
+    } 
+    error_flag = det == 0;
+
     D = permute(vector_D, p, n);
     vector_X = calcSystem(matrix, matrix_L, matrix_U, D, n);
     return pair<vector<double>, bool>(vector_X, error_flag);
