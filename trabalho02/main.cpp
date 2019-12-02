@@ -213,13 +213,30 @@ int main(int argc, char** argv){
     int n = 3, i;
     pair<matriz, matriz> factor;
     pair<vector<double>, bool> result;
-    matriz matrix_A = {{1, -3, 2}, {-2, 8, -1}, {4, -6, 5}};
+    // matriz matrix_A = {{1, -3, 2}, {-2, 8, -1}, {4, -6, 5}};
+    matriz matrix_A(n, vector<double>(n));
     matriz matrix_L;
     matriz matrix_U;
-    vector<double> vector_D = {11, -15, 29};
+    // vector<double> vector_D = {11, -15, 29};
+    vector<double> vector_D(n);
     vector<double> vector_X;
     bool error;
-    
+    // Valor de n
+    cout << "Entre o número de elementos: ";
+    cin >> n;
+    // Elementos da matriz A
+    for(int i = 0 ; i < n ; i++){
+        for(int j = 0 ; j < n ; j++){
+            cout << "Entre o valor do elemento " << i << ", " << j << " da matriz A: ";
+            cin >> matrix_A[i][j];
+        }
+    }    
+    // Elementos do vetor D
+    for(int i = 0 ; i < n ; i++){
+        cout << "Entre o valor do elemento " << i << " do vetor D: ";
+        cin >> vector_D[i];
+    }
+
     // result.first -> Vetor solução
     // result.second -> boolean de erro
     result = factLU(matrix_A, matrix_L, matrix_U, vector_D, n);
