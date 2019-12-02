@@ -171,6 +171,12 @@ pair<vector<double>, bool> factDoolitle(const matriz& matrix, matriz& matrix_L, 
             }
         }
     }
+
+    double det = 1;
+    for(int l = 0 ; l < n ; l++){
+        det *= matrix_U[l][l];
+    } 
+    if(det == 0) return pair<vector<double>, bool>(vector_X, true);
     
     vector_X = calcSystem(matrix, matrix_L, matrix_U, vector_D, n);
     return pair<vector<double>, bool>(vector_X, error_flag);
