@@ -131,7 +131,7 @@ pair<vector<double>, bool> factLU(const matriz& matrix, matriz& matrix_L, matriz
     for(int l = 0 ; l < n ; l++){
         det *= matrix_U[l][l];
     } 
-    error_flag = det == 0;
+    if(det == 0) return pair<vector<double>, bool>(vector_X, true);
 
     D = permute(vector_D, p, n);
     vector_X = calcSystem(matrix, matrix_L, matrix_U, D, n);
@@ -199,6 +199,25 @@ void printMatrix(matriz& matrix){
     }
 }
 
+void printMatrix(matriz& matrix_L, matriz& matrix_U, int n){
+    int k, i ,j;
+    for(i = 0 ; i < n ; i++){
+        for(j = 0 ; j < (2*n) ; j++){
+            if(j < n){
+                printf("%8.2f ", matrix_U[i][j]);
+            }
+            else{
+                if(j == n){
+                    printf(" | ");
+                }
+                k = j % n;
+                printf("%8.2f ", matrix_L[i][k]);
+            }
+        }
+        cout << endl;
+    }
+}
+
 /*
 Testes:
     LU com pivotação:
@@ -218,55 +237,69 @@ int main(int argc, char** argv){
     // Declaração dos Dados
     int n = 3, i;
     pair<matriz, matriz> factor;
-    pair<vector<double>, bool> result;
-    // matriz matrix_A = {{1, -3, 2}, {-2, 8, -1}, {4, -6, 5}};
-    matriz matrix_A(n, vector<double>(n));
-    matriz matrix_L;
-    matriz matrix_U;
-    // vector<double> vector_D = {11, -15, 29};
-    vector<double> vector_D(n);
-    vector<double> vector_X;
-    bool error;
+    pair<vector<double>, bool> result_LU, result_DL;
+    matriz matrix_A = {{20, 7, 9}, {7, 30, 8}, {9, 8, 30}};
+    // matriz matrix_A(n, vector<double>(n));
+    matriz matrix_L_LU, matrix_L_DL;
+    matriz matrix_U_LU, matrix_U_DL;
+    vector<double> vector_D = {16, 38, 38};
+    // vector<double> vector_D(n);
+    vector<double> vector_X_LU, vector_X_DL;
+    bool lu_error, doolitle_error;
 
     // Valor de n
-    cout << "Entre o número de elementos: ";
-    cin >> n;
+    // cout << "Entre o número de elementos: ";
+    // cin >> n;
 
-    // Elementos da matriz A
-    for(int i = 0 ; i < n ; i++){
-        for(int j = 0 ; j < n ; j++){
-            cout << "Entre o valor do elemento " << i << ", " << j << " da matriz A: ";
-            cin >> matrix_A[i][j];
-        }
-    }
+    // // Elementos da matriz A
+    // for(int i = 0 ; i < n ; i++){
+    //     for(int j = 0 ; j < n ; j++){
+    //         cout << "Entre o valor do elemento " << i << ", " << j << " da matriz A: ";
+    //         cin >> matrix_A[i][j];
+    //     }
+    // }
 
-    // Elementos do vetor D
-    for(int i = 0 ; i < n ; i++){
-        cout << "Entre o valor do elemento " << i << " do vetor D: ";
-        cin >> vector_D[i];
-    }
+    // // Elementos do vetor D
+    // for(int i = 0 ; i < n ; i++){
+    //     cout << "Entre o valor do elemento " << i << " do vetor D: ";
+    //     cin >> vector_D[i];
+    // }
 
     /*
     Aplicação dos Métodos
     result.first -> Vetor solução
     result.second -> boolean de erro
     */
-    result = factLU(matrix_A, matrix_L, matrix_U, vector_D, n);
-    // result = factDoolitle(matrix_A, matrix_L, matrix_U, vector_D, n);
-    error = result.second;
-    if(error){
+    result_LU = factLU(matrix_A, matrix_L_LU, matrix_U_LU, vector_D, n);
+    result_DL = factDoolitle(matrix_A, matrix_L_DL, matrix_U_DL, vector_D, n);
+    lu_error = result_LU.second;
+    doolitle_error = result_DL.second;
+    if(lu_error){
         cout << "Error" << endl;
         return 0;
     }
-    vector_X = result.first;
+    vector_X_LU = result_LU.first;
+    vector_X_DL = result_DL.first;
 
     // Printa o resutado 
-    for(i = 0 ; i < n ; i++) printf("c%d: %5.2f\n", i, vector_X[i]);   
-    
-    // Checa o resultado
-    if (checkResult(matrix_A, vector_X, vector_D, n))
+    cout << "Fatoração LU" << endl;
+    printMatrix(matrix_L_LU, matrix_U_LU, n);
+    for(i = 0 ; i < n ; i++) printf("c%d: %5.2f\n", i, vector_X_LU[i]);   
+    if (checkResult(matrix_A, vector_X_LU, vector_D, n))
         cout << "Ok" << endl;
     else cout << "Error" << endl;
+    
+    cout << endl;
+
+    // Print resultado
+    cout << "Doolitle" << endl;
+    printMatrix(matrix_L_DL, matrix_U_DL, n);
+    for(i = 0 ; i < n ; i++) printf("c%d: %5.2f\n", i, vector_X_DL[i]);   
+    if (checkResult(matrix_A, vector_X_DL, vector_D, n))
+        cout << "Ok" << endl;
+    else cout << "Error" << endl;   
+    
+
     
     return 0;
 }
