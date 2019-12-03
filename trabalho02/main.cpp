@@ -1,18 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
-#include <bits/stdc++.h>
 
 using namespace std;
 
 typedef vector<vector<double>> matriz;
-
-/*
-    TODO Raise Error quando pivo = 0
-    TODO Refatorar para usar ponteiros ao inves de vector
-    Obs: tempo de compilação está mais demorado do que eu imaginava
-
-*/
 
 void initPermutationVector(vector<int>& p){
     for(int i = 0 ; i < p.size() ; i++) p[i] = i;
@@ -88,6 +80,9 @@ vector<double> substituicoesRetroativas(const matriz& matrix, const vector<doubl
 vector<double> calcSystem(const matriz& matrix, const matriz& matrix_L, const matriz& matrix_U, const vector<double>& vector_D,const int& n){
     vector<double> vector_X, vector_Y;
     vector_Y = substituicoesSucessivas(matrix_L, vector_D, n);
+    for(int i = 0 ; i < n ; i++){
+        cout << vector_Y[i] << endl;
+    }
     vector_X = substituicoesRetroativas(matrix_U, vector_Y, n);
     return vector_X;
 }
@@ -101,11 +96,11 @@ pair<vector<double>, bool> factLU(const matriz& matrix, matriz& matrix_L, matriz
     pair<double, int> pivo;
     vector<int> p(n);
     vector<double> D;
+
     matrix_U = matrix;
     matrix_L = matriz(n, vector<double>(n));
     matrix_L[0][0] = 1;
 
-    
     initPermutationVector(p);
     
     for(k = 0 ; k < n - 1 ; k++){
@@ -149,7 +144,6 @@ pair<vector<double>, bool> factDoolitle(const matriz& matrix, matriz& matrix_L, 
     matrix_L = matriz(n, vector<double>(n));
 
     for(i = 0 ; i < n ; i++){
-
         for(k = i ; k < n ; k++){
             soma = 0;
             for(j = 0 ; j < i ; j++){
@@ -244,18 +238,18 @@ int main(int argc, char** argv){
     int n = 3, i;
     pair<matriz, matriz> factor;
     pair<vector<double>, bool> result_LU, result_DL;
-    matriz matrix_A = {{20, 7, 9}, {7, 30, 8}, {9, 8, 30}};
+    matriz matrix_A = {{1, 0, 1, 0}, {2, 1, 2, 2}, {5, 2, 2, 2}, {0, 5, 0, 2}};
     // matriz matrix_A(n, vector<double>(n));
     matriz matrix_L_LU, matrix_L_DL;
     matriz matrix_U_LU, matrix_U_DL;
-    vector<double> vector_D = {16, 38, 38};
+    vector<double> vector_D = {0, 1, 2, 3};
     // vector<double> vector_D(n);
     vector<double> vector_X_LU, vector_X_DL;
     bool lu_error, doolitle_error;
 
     // Valor de n
-    // cout << "Entre o número de elementos: ";
-    // cin >> n;
+    cout << "Entre o número de elementos: ";
+    cin >> n;
 
     // // Elementos da matriz A
     // for(int i = 0 ; i < n ; i++){
@@ -280,32 +274,33 @@ int main(int argc, char** argv){
     result_DL = factDoolitle(matrix_A, matrix_L_DL, matrix_U_DL, vector_D, n);
     lu_error = result_LU.second;
     doolitle_error = result_DL.second;
-    if(lu_error){
-        cout << "Error" << endl;
-        return 0;
-    }
-    vector_X_LU = result_LU.first;
-    vector_X_DL = result_DL.first;
+    
+    
+    
 
-    // Printa o resutado 
-    cout << "Fatoração LU" << endl;
-    printMatrix(matrix_L_LU, matrix_U_LU, n);
-    for(i = 0 ; i < n ; i++) printf("c%d: %5.2f\n", i, vector_X_LU[i]);   
-    if (checkResult(matrix_A, vector_X_LU, vector_D, n))
-        cout << "Ok" << endl;
-    else cout << "Error" << endl;
+    // Printa o resutado
+    if(!lu_error){
+        vector_X_LU = result_LU.first;
+        cout << "Fatoração LU" << endl;
+        printMatrix(matrix_L_LU, matrix_U_LU, n);
+        for(i = 0 ; i < n ; i++) printf("c%d: %5.2f\n", i, vector_X_LU[i]);   
+        if (checkResult(matrix_A, vector_X_LU, vector_D, n))
+            cout << "Ok" << endl;
+        else cout << "Error" << endl;
+    } else cout << "LU - Error (Não foi possível achar soluão para o sistema)" << endl;
     
     cout << endl;
 
     // Print resultado
-    cout << "Doolitle" << endl;
-    printMatrix(matrix_L_DL, matrix_U_DL, n);
-    for(i = 0 ; i < n ; i++) printf("c%d: %5.2f\n", i, vector_X_DL[i]);   
-    if (checkResult(matrix_A, vector_X_DL, vector_D, n))
-        cout << "Ok" << endl;
-    else cout << "Error" << endl;   
-    
-
-    
+    if(!lu_error){
+        vector_X_DL = result_DL.first;    
+        cout << "Doolitle" << endl;
+        printMatrix(matrix_L_DL, matrix_U_DL, n);
+        for(i = 0 ; i < n ; i++) printf("c%d: %5.2f\n", i, vector_X_DL[i]);   
+        if (checkResult(matrix_A, vector_X_DL, vector_D, n))
+            cout << "Ok" << endl;
+        else cout << "Error" << endl;
+    } else cout << "DooLitle - Error(Não foi possível achar solução para o sistema)" << endl;
+        
     return 0;
 }
