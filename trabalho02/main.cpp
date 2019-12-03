@@ -87,15 +87,6 @@ vector<double> calcSystem(const matriz& matrix, const matriz& matrix_L, const ma
     vector_X = substituicoesRetroativas(matrix_U, vector_Y, n);
     return vector_X;
 }
-void printMatrix(matriz& matrix){
-    for(unsigned int i = 0 ; i < matrix.size() ; i++){
-        for(int j = 0 ; j < matrix.size() ; j++){
-            printf("%8.2f ", matrix[i][j]);
-        }
-        cout << endl;
-    }
-}
-
 
 pair<vector<double>, bool> factLU(const matriz& matrix, matriz& matrix_L, matriz& matrix_U, vector<double>& vector_D, const int& n){
     int i, j, k;
@@ -202,14 +193,14 @@ bool checkResult(matriz matrix, vector<double> vector_X, vector<double> vector_D
     return true;
 }
 
-// void printMatrix(matriz& matrix){
-//     for(unsigned int i = 0 ; i < matrix.size() ; i++){
-//         for(int j = 0 ; j < matrix.size() ; j++){
-//             printf("%8.2f ", matrix[i][j]);
-//         }
-//         cout << endl;
-//     }
-// }
+void printMatrix(matriz& matrix){
+    for(unsigned int i = 0 ; i < matrix.size() ; i++){
+        for(int j = 0 ; j < matrix.size() ; j++){
+            printf("%8.2f ", matrix[i][j]);
+        }
+        cout << endl;
+    }
+}
 
 void printMatrix(matriz& matrix_L, matriz& matrix_U, int n){
     int k, i ,j;
@@ -287,6 +278,7 @@ int main(int argc, char** argv){
     lu_error = result_LU.second;
     doolitle_error = result_DL.second;
 
+    cout << endl;
     // Printa o resutado
     if(!lu_error){
         vector_X_LU = result_LU.first;
