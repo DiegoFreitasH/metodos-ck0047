@@ -195,7 +195,9 @@ bool checkResult(matriz matrix, vector<double> vector_X, vector<double> vector_D
         for(j = 0 ; j < n ; j++){
             soma += vector_X[j]*matrix[i][j];
         }
-        if(soma != vector_D[i]) return false;
+        if(abs(soma - vector_D[i]) > 1e-3){
+            return false;
+        } 
     }
     return true;
 }
