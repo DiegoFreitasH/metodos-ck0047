@@ -13,9 +13,13 @@ void initPermutationVector(vector<int>& p){
 void permute(vector<int>& p, matriz& matrix, const int& k, const int& r){
     int aux, i;
     double temp;
-    swap(p[k], p[r]);
+    aux = p[k];
+    p[k] = p[r];
+    p[r] = aux;
     for(i = 0 ; i < matrix.size() ; i++){
-        swap(matrix[k][i], matrix[r][i]);
+        temp = matrix[k][i];
+        matrix[k][i] = matrix[r][i];
+        matrix[r][i] = temp;
     }
 }
 
@@ -80,12 +84,18 @@ vector<double> substituicoesRetroativas(const matriz& matrix, const vector<doubl
 vector<double> calcSystem(const matriz& matrix, const matriz& matrix_L, const matriz& matrix_U, const vector<double>& vector_D,const int& n){
     vector<double> vector_X, vector_Y;
     vector_Y = substituicoesSucessivas(matrix_L, vector_D, n);
-    for(int i = 0 ; i < n ; i++){
-        cout << vector_Y[i] << endl;
-    }
     vector_X = substituicoesRetroativas(matrix_U, vector_Y, n);
     return vector_X;
 }
+void printMatrix(matriz& matrix){
+    for(unsigned int i = 0 ; i < matrix.size() ; i++){
+        for(int j = 0 ; j < matrix.size() ; j++){
+            printf("%8.2f ", matrix[i][j]);
+        }
+        cout << endl;
+    }
+}
+
 
 pair<vector<double>, bool> factLU(const matriz& matrix, matriz& matrix_L, matriz& matrix_U, vector<double>& vector_D, const int& n){
     int i, j, k;
@@ -190,14 +200,14 @@ bool checkResult(matriz matrix, vector<double> vector_X, vector<double> vector_D
     return true;
 }
 
-void printMatrix(matriz& matrix){
-    for(unsigned int i = 0 ; i < matrix.size() ; i++){
-        for(int j = 0 ; j < matrix.size() ; j++){
-            printf("%8.2f ", matrix[i][j]);
-        }
-        cout << endl;
-    }
-}
+// void printMatrix(matriz& matrix){
+//     for(unsigned int i = 0 ; i < matrix.size() ; i++){
+//         for(int j = 0 ; j < matrix.size() ; j++){
+//             printf("%8.2f ", matrix[i][j]);
+//         }
+//         cout << endl;
+//     }
+// }
 
 void printMatrix(matriz& matrix_L, matriz& matrix_U, int n){
     int k, i ,j;
@@ -238,12 +248,12 @@ int main(int argc, char** argv){
     int n = 3, i;
     pair<matriz, matriz> factor;
     pair<vector<double>, bool> result_LU, result_DL;
-    matriz matrix_A = {{1, 0, 1, 0}, {2, 1, 2, 2}, {5, 2, 2, 2}, {0, 5, 0, 2}};
-    // matriz matrix_A(n, vector<double>(n));
+    // matriz matrix_A = {{1, -3, 2}, {-2, 8, -1}, {4, -6, 5}};
+    matriz matrix_A(n, vector<double>(n));
     matriz matrix_L_LU, matrix_L_DL;
     matriz matrix_U_LU, matrix_U_DL;
-    vector<double> vector_D = {0, 1, 2, 3};
-    // vector<double> vector_D(n);
+    // vector<double> vector_D = {11, -15, 29};;
+    vector<double> vector_D(n);
     vector<double> vector_X_LU, vector_X_DL;
     bool lu_error, doolitle_error;
 
@@ -251,19 +261,19 @@ int main(int argc, char** argv){
     cout << "Entre o número de elementos: ";
     cin >> n;
 
-    // // Elementos da matriz A
-    // for(int i = 0 ; i < n ; i++){
-    //     for(int j = 0 ; j < n ; j++){
-    //         cout << "Entre o valor do elemento " << i << ", " << j << " da matriz A: ";
-    //         cin >> matrix_A[i][j];
-    //     }
-    // }
+    // Elementos da matriz A
+    for(int i = 0 ; i < n ; i++){
+        for(int j = 0 ; j < n ; j++){
+            cout << "Entre o valor do elemento " << i << ", " << j << " da matriz A: ";
+            cin >> matrix_A[i][j];
+        }
+    }
 
-    // // Elementos do vetor D
-    // for(int i = 0 ; i < n ; i++){
-    //     cout << "Entre o valor do elemento " << i << " do vetor D: ";
-    //     cin >> vector_D[i];
-    // }
+    // Elementos do vetor D
+    for(int i = 0 ; i < n ; i++){
+        cout << "Entre o valor do elemento " << i << " do vetor D: ";
+        cin >> vector_D[i];
+    }
 
     /*
     Aplicação dos Métodos
@@ -274,9 +284,6 @@ int main(int argc, char** argv){
     result_DL = factDoolitle(matrix_A, matrix_L_DL, matrix_U_DL, vector_D, n);
     lu_error = result_LU.second;
     doolitle_error = result_DL.second;
-    
-    
-    
 
     // Printa o resutado
     if(!lu_error){
@@ -292,7 +299,7 @@ int main(int argc, char** argv){
     cout << endl;
 
     // Print resultado
-    if(!lu_error){
+    if(!doolitle_error){
         vector_X_DL = result_DL.first;    
         cout << "Doolitle" << endl;
         printMatrix(matrix_L_DL, matrix_U_DL, n);
